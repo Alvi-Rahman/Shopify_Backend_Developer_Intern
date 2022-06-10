@@ -19,7 +19,8 @@ class Inventory(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     stock_count = models.PositiveIntegerField(default=0)
-    inventory_type = models.ForeignKey(InventoryType, on_delete=models.CASCADE)
+    inventory_type = models.ForeignKey(InventoryType, on_delete=models.SET_NULL,
+                                       blank=True, null=True)
     active_status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
