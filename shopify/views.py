@@ -1,6 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from shopify.serializers import (InventoryTypeCreateSerializer,)
+from shopify.serializers import (InventoryTypeCreateSerializer,
+                                 InventoryCreateSerializer, )
 from status_codes import error_codes
 from status_codes import success_codes
 from utils.response_utils import ResponseWrapper
@@ -33,3 +34,25 @@ class InventoryTypeViewSet(ModelViewSet):
         except Exception as e:
             return Response(**self.response_wrapper.formatted_output_error(error_codes.UNKNOWN_ERROR, self.language))
 
+
+class InventoryViewSet(ModelViewSet):
+
+    def get_serializer_class(self):
+        if self.action == "create":
+            return InventoryCreateSerializer
+        return InventoryCreateSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(request.data)
+        if not serializer.is_valid():
+            return Response(
+                serializer.errors,
+                status=400
+            )
+
+        self.perform_create(serializer)
+
+        return Response(
+            data=serializer.validated_data,
+            status=200
+        )
