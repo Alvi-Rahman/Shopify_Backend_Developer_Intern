@@ -156,6 +156,20 @@ class InventoryTypeViewSet(ModelViewSet):
             )
             return Response(**self.response_wrapper.formatted_output_error(error_codes.UNKNOWN_ERROR, self.language))
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        if not instance:
+            return Response(**self.response_wrapper.formatted_output_error(
+                error_codes.INVENTORY_TYPE_NOT_FOUND, self.language))
+
+        self.perform_destroy(instance)
+        return Response(**self.response_wrapper.formatted_output_success(
+            code=success_codes.INVENTORY_TYPE_DELETE_SUCCESS,
+            data={"id": kwargs.get('id')},
+            language=self.language
+        ))
+
 
 class InventoryViewSet(ModelViewSet):
     response_wrapper = ResponseWrapper()
