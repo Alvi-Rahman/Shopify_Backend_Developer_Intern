@@ -186,10 +186,17 @@ class InventoryTypeViewSet(ModelViewSet):
             return Response(**self.response_wrapper.formatted_output_error(
                 error_codes.INVENTORY_TYPE_NOT_FOUND, self.language))
 
+        inventory_list = list(instance.inventory_set.all().values_list('id', flat=True))
+
+        instance.inventory_set.all().delete()
         self.perform_destroy(instance)
+
         return Response(**self.response_wrapper.formatted_output_success(
             code=success_codes.INVENTORY_TYPE_DELETE_SUCCESS,
-            data={"id": kwargs.get('id')},
+            data={
+                "inventory_type_id": kwargs.get('id'),
+                "inventory_id": inventory_list
+            },
             language=self.language
         ))
 
