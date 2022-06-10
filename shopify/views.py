@@ -30,6 +30,8 @@ class InventoryTypeViewSet(ModelViewSet):
         elif self.action == "retrieve":
             return InventoryTypeGetSerializer
 
+        return InventoryTypeGetSerializer
+
     def get_object(self):
         """
         Returns the object the view is displaying.
