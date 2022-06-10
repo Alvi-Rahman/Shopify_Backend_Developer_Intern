@@ -8,6 +8,7 @@ from shopify.models import ErrorLog, Inventory
 from shopify.serializers import (InventoryCreateSerializer,
                                  InventoryGetSerializer, )
 from status_codes import success_codes, error_codes
+from utils.pagination_utils import CustomLimitPagination
 from utils.response_utils import ResponseWrapper
 
 
@@ -15,6 +16,8 @@ class InventoryViewSet(ModelViewSet):
     response_wrapper = ResponseWrapper()
     language = "en"
     queryset = Inventory.objects.all()
+    pagination_class = CustomLimitPagination
+    lookup_field = "id"
 
     def get_object(self):
         """
@@ -109,6 +112,26 @@ class InventoryViewSet(ModelViewSet):
             return Response(**self.response_wrapper.formatted_output_success(
                 code=success_codes.INVENTORY_FETCH_SUCCESS,
                 data=paginated_response.data,
+                language=self.language
+            ))
+        except Exception as e:
+            ErrorLog.objects.create(
+                log_type="INVENTORY_TYPE",
+                request_data=request.data,
+                response_data=e.args
+            )
+            return Response(**self.response_wrapper.formatted_output_error(error_codes.UNKNOWN_ERROR, self.language))
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            if not instance:
+                return Response(**self.response_wrapper.formatted_output_error(
+                    error_codes.INVENTORY_TYPE_NOT_FOUND, self.language))
+            serializer = self.get_serializer(instance, many=False)
+            return Response(**self.response_wrapper.formatted_output_success(
+                code=success_codes.INVENTORY_TYPE_RETRIEVE_SUCCESS,
+                data=serializer.data,
                 language=self.language
             ))
         except Exception as e:
