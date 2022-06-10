@@ -36,7 +36,7 @@ class InventoryTypeViewSet(ModelViewSet):
             self.perform_create(serializer)
 
             return Response(**self.response_wrapper.formatted_output_success(
-                code=success_codes.INVENTORY_CREATE_SUCCESS,
+                code=success_codes.INVENTORY_TYPE_CREATE_SUCCESS,
                 data=serializer.validated_data,
                 language=self.language
             ))
@@ -50,6 +50,8 @@ class InventoryTypeViewSet(ModelViewSet):
 
 
 class InventoryViewSet(ModelViewSet):
+    response_wrapper = ResponseWrapper()
+    language = "en"
 
     def get_serializer_class(self):
         if self.action == "create":
@@ -57,16 +59,33 @@ class InventoryViewSet(ModelViewSet):
         return InventoryCreateSerializer
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(request.data)
-        if not serializer.is_valid():
-            return Response(
-                serializer.errors,
-                status=400
+
+        try:
+            serializer = self.get_serializer(data=request.data)
+            if not serializer.is_valid():
+                ErrorLog.objects.create(
+                    log_type="INVENTORY",
+                    request_data=request.data,
+                    response_data=serializer.errors
+                )
+
+                error_codes.MISSING_FIELD_DATA.set_state_message({self.language: serializer.errors})
+                return Response(
+                    **self.response_wrapper.formatted_output_error(error_codes.MISSING_FIELD_DATA, self.language))
+
+            self.perform_create(serializer)
+
+            return Response(**self.response_wrapper.formatted_output_success(
+                code=success_codes.INVENTORY_CREATE_SUCCESS,
+                data=serializer.validated_data,
+                language=self.language
+            ))
+        except Exception as e:
+            ErrorLog.objects.create(
+                log_type="INVENTORY_TYPE",
+                request_data=request.data,
+                response_data=e.args
             )
+            return Response(**self.response_wrapper.formatted_output_error(error_codes.UNKNOWN_ERROR, self.language))
 
-        self.perform_create(serializer)
 
-        return Response(
-            data=serializer.validated_data,
-            status=200
-        )

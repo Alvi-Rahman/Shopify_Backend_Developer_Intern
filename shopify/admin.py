@@ -9,7 +9,7 @@ class ErrorLogAdmin(admin.ModelAdmin):
                     ]
     search_fields = ["log_type",]
 
-    list_filter = ['log_type',]
+    list_filter = ['log_type', ]
 
 
 admin.site.register(InventoryType)
