@@ -1,17 +1,7 @@
 from rest_framework.serializers import ModelSerializer
-from .models import Inventory, InventoryType
 
-
-class InventoryTypeCreateSerializer(ModelSerializer):
-    class Meta:
-        model = InventoryType
-        fields = "__all__"
-
-
-class InventoryTypeGetSerializer(ModelSerializer):
-    class Meta:
-        model = InventoryType
-        exclude = ("id",)
+from shopify.models import Inventory
+from shopify.serializers import InventoryTypeCreateSerializer
 
 
 class InventoryCreateSerializer(ModelSerializer):
