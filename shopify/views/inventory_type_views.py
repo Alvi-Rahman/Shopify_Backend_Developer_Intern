@@ -7,8 +7,7 @@ from rest_framework.viewsets import ModelViewSet
 from shopify.models import ErrorLog, InventoryType
 from shopify.serializers import (InventoryTypeCreateSerializer,
                                  InventoryTypeGetSerializer, )
-from status_codes import error_codes
-from status_codes import success_codes
+from status_codes import success_codes, error_codes
 from utils.pagination_utils import CustomLimitPagination
 from utils.response_utils import ResponseWrapper
 
