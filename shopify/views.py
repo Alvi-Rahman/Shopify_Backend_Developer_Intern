@@ -1,9 +1,11 @@
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from shopify.models import ErrorLog
+from shopify.models import ErrorLog, InventoryType
 from shopify.serializers import (InventoryTypeCreateSerializer,
-                                 InventoryCreateSerializer, GetInventorySerializer, )
+                                 InventoryCreateSerializer,
+                                 InventoryGetSerializer,
+                                 InventoryTypeGetSerializer, )
 from status_codes import error_codes
 from status_codes import success_codes
 from utils.response_utils import ResponseWrapper
@@ -11,11 +13,14 @@ from utils.response_utils import ResponseWrapper
 
 class InventoryTypeViewSet(ModelViewSet):
     response_wrapper = ResponseWrapper()
+    queryset = InventoryType.objects.all()
     language = "en"
 
     def get_serializer_class(self):
         if self.action == "create":
             return InventoryTypeCreateSerializer
+        if self.action == "list":
+            return InventoryTypeGetSerializer
         return InventoryTypeCreateSerializer
 
     def create(self, request, *args, **kwargs):
@@ -37,7 +42,7 @@ class InventoryTypeViewSet(ModelViewSet):
 
             return Response(**self.response_wrapper.formatted_output_success(
                 code=success_codes.INVENTORY_TYPE_CREATE_SUCCESS,
-                data=serializer.validated_data,
+                data=InventoryTypeGetSerializer(instance=serializer.instance).data,
                 language=self.language
             ))
         except Exception as e:
@@ -77,7 +82,7 @@ class InventoryViewSet(ModelViewSet):
 
             return Response(**self.response_wrapper.formatted_output_success(
                 code=success_codes.INVENTORY_CREATE_SUCCESS,
-                data=GetInventorySerializer(instance=serializer.instance).data,
+                data=InventoryGetSerializer(instance=serializer.instance).data,
                 language=self.language
             ))
         except Exception as e:
