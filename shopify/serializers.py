@@ -8,3 +8,7 @@ class InventoryTypeCreateSerializer(ModelSerializer):
         fields = "__all__"
 
 
+class InventoryCreateSerializer(ModelSerializer):
+    class Meta:
+        model = Inventory
+        fields = "__all__"
