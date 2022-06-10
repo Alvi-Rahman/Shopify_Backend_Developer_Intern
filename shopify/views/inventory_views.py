@@ -6,7 +6,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from shopify.models import ErrorLog, Inventory
 from shopify.serializers import (InventoryCreateSerializer,
-                                 InventoryGetSerializer,)
+                                 InventoryGetSerializer, )
 from status_codes import success_codes, error_codes
 from utils.response_utils import ResponseWrapper
 
@@ -118,6 +118,3 @@ class InventoryViewSet(ModelViewSet):
                 response_data=e.args
             )
             return Response(**self.response_wrapper.formatted_output_error(error_codes.UNKNOWN_ERROR, self.language))
-
-
-

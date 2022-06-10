@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer
 
 from shopify.models import Inventory
-from shopify.serializers import InventoryTypeCreateSerializer
+from .inventory_type_serializers import InventoryTypeCreateSerializer
 
 
 class InventoryCreateSerializer(ModelSerializer):
