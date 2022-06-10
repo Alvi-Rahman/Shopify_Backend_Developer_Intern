@@ -3,7 +3,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from shopify.models import ErrorLog
 from shopify.serializers import (InventoryTypeCreateSerializer,
-                                 InventoryCreateSerializer, )
+                                 InventoryCreateSerializer, GetInventorySerializer, )
 from status_codes import error_codes
 from status_codes import success_codes
 from utils.response_utils import ResponseWrapper
@@ -77,7 +77,7 @@ class InventoryViewSet(ModelViewSet):
 
             return Response(**self.response_wrapper.formatted_output_success(
                 code=success_codes.INVENTORY_CREATE_SUCCESS,
-                data=serializer.validated_data,
+                data=GetInventorySerializer(instance=serializer.instance).data,
                 language=self.language
             ))
         except Exception as e:
