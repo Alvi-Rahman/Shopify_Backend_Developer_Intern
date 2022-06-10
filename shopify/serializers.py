@@ -8,15 +8,21 @@ class InventoryTypeCreateSerializer(ModelSerializer):
         fields = "__all__"
 
 
+class InventoryTypeGetSerializer(ModelSerializer):
+    class Meta:
+        model = InventoryType
+        exclude = ("id",)
+
+
 class InventoryCreateSerializer(ModelSerializer):
     class Meta:
         model = Inventory
         fields = "__all__"
 
 
-class GetInventorySerializer(ModelSerializer):
+class InventoryGetSerializer(ModelSerializer):
     inventory_type = InventoryTypeCreateSerializer()
 
     class Meta:
         model = Inventory
-        fields = "__all__"
+        exclude = ("id",)
