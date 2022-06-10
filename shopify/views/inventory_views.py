@@ -1,17 +1,19 @@
+from django.utils import timezone
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from shopify.models import ErrorLog, Inventory
 from shopify.serializers import (InventoryCreateSerializer,
                                  InventoryGetSerializer,)
-from status_codes import error_codes, success_codes
+from status_codes import success_codes, error_codes
 from utils.response_utils import ResponseWrapper
 
 
 class InventoryViewSet(ModelViewSet):
     response_wrapper = ResponseWrapper()
     language = "en"
-
     queryset = Inventory.objects.all()
 
     def get_object(self):
@@ -40,9 +42,9 @@ class InventoryViewSet(ModelViewSet):
         return obj
 
     def get_serializer_class(self):
-        if self.action == "create":
+        if self.action == "create" or self.action == "partial_update":
             return InventoryCreateSerializer
-        return InventoryCreateSerializer
+        return InventoryGetSerializer
 
     def create(self, request, *args, **kwargs):
 
@@ -73,5 +75,49 @@ class InventoryViewSet(ModelViewSet):
                 response_data=e.args
             )
             return Response(**self.response_wrapper.formatted_output_error(error_codes.UNKNOWN_ERROR, self.language))
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                "date_from", openapi.IN_QUERY, type=openapi.FORMAT_DATE),
+            openapi.Parameter(
+                "date_to", openapi.IN_QUERY, type=openapi.FORMAT_DATE),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        try:
+            queryset = self.get_queryset()
+
+            date_from = request.query_params.get('date_from')
+            date_to = request.query_params.get('date_to')
+            if date_from is not None and date_to is not None:
+                try:
+                    date_from = timezone.datetime.strptime(
+                        date_from, "%Y-%m-%d").date()
+                    date_to = timezone.datetime.strptime(
+                        date_to, "%Y-%m-%d").date()
+                    date_to += timezone.timedelta(days=1)
+                except ValueError:
+                    return Response(
+                        **self.response_wrapper.formatted_output_error(error_codes.INVALID_DATE, self.language))
+                queryset = queryset.filter(created_at__range=[date_from, date_to])
+
+            page = self.paginate_queryset(queryset)
+            serializer = self.get_serializer(page, many=True)
+            paginated_response = self.get_paginated_response(serializer.data)
+
+            return Response(**self.response_wrapper.formatted_output_success(
+                code=success_codes.INVENTORY_FETCH_SUCCESS,
+                data=paginated_response.data,
+                language=self.language
+            ))
+        except Exception as e:
+            ErrorLog.objects.create(
+                log_type="INVENTORY_TYPE",
+                request_data=request.data,
+                response_data=e.args
+            )
+            return Response(**self.response_wrapper.formatted_output_error(error_codes.UNKNOWN_ERROR, self.language))
+
 
 
