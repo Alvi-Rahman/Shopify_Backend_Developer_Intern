@@ -36,5 +36,10 @@ class ErrorLog(models.Model):
         max_length=25, choices=LOG_TYPE_CHOICES, default="INVENTORY")
     request_data = models.JSONField(blank=True, null=True)
     response_data = models.JSONField(blank=True, null=True)
-
     misc_data = models.TextField(blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.log_type
