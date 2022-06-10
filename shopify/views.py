@@ -180,25 +180,33 @@ class InventoryTypeViewSet(ModelViewSet):
             return Response(**self.response_wrapper.formatted_output_error(error_codes.UNKNOWN_ERROR, self.language))
 
     def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
+        try:
+            instance = self.get_object()
 
-        if not instance:
-            return Response(**self.response_wrapper.formatted_output_error(
-                error_codes.INVENTORY_TYPE_NOT_FOUND, self.language))
+            if not instance:
+                return Response(**self.response_wrapper.formatted_output_error(
+                    error_codes.INVENTORY_TYPE_NOT_FOUND, self.language))
 
-        inventory_list = list(instance.inventory_set.all().values_list('id', flat=True))
+            inventory_list = list(instance.inventory_set.all().values_list('id', flat=True))
 
-        instance.inventory_set.all().delete()
-        self.perform_destroy(instance)
+            instance.inventory_set.all().delete()
+            self.perform_destroy(instance)
 
-        return Response(**self.response_wrapper.formatted_output_success(
-            code=success_codes.INVENTORY_TYPE_DELETE_SUCCESS,
-            data={
-                "inventory_type_id": kwargs.get('id'),
-                "inventory_id": inventory_list
-            },
-            language=self.language
-        ))
+            return Response(**self.response_wrapper.formatted_output_success(
+                code=success_codes.INVENTORY_TYPE_DELETE_SUCCESS,
+                data={
+                    "inventory_type_id": kwargs.get('id'),
+                    "inventory_id": inventory_list
+                },
+                language=self.language
+            ))
+        except Exception as e:
+            ErrorLog.objects.create(
+                log_type="INVENTORY_TYPE",
+                request_data=request.data,
+                response_data=e.args
+            )
+            return Response(**self.response_wrapper.formatted_output_error(error_codes.UNKNOWN_ERROR, self.language))
 
 
 class InventoryViewSet(ModelViewSet):
