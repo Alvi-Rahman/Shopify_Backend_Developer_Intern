@@ -7,4 +7,9 @@ urlpatterns = [
             "post": "create"
         }
     )),
+    path('inventory-type/create/', InventoryTypeViewSet.as_view(
+        {
+            "post": "create"
+        }
+    ))
 ]
