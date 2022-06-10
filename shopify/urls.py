@@ -16,5 +16,8 @@ urlpatterns = [
         {
             "get": "list"
         }
-    ))
+    )),
+    path("inventory-type/<int:id>/", InventoryTypeViewSet.as_view(
+        {"get": "retrieve"}
+    )),
 ]

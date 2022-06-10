@@ -17,13 +17,42 @@ class InventoryTypeViewSet(ModelViewSet):
     queryset = InventoryType.objects.all()
     pagination_class = CustomLimitPagination
     language = "en"
+    lookup_field = "id"
 
     def get_serializer_class(self):
         if self.action == "create":
             return InventoryTypeCreateSerializer
         if self.action == "list":
             return InventoryTypeGetSerializer
-        return InventoryTypeCreateSerializer
+        return InventoryTypeGetSerializer
+
+    def get_object(self):
+        """
+        Returns the object the view is displaying.
+
+        You may want to override this if you need to provide non-standard
+        queryset lookups.  Eg if objects are referenced using multiple
+        keyword arguments in the url conf.
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+
+        # Perform the lookup filtering.
+        lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
+
+        assert lookup_url_kwarg in self.kwargs, (
+                'Expected view %s to be called with a URL keyword argument '
+                'named "%s". Fix your URL conf, or set the `.lookup_field` '
+                'attribute on the view correctly.' %
+                (self.__class__.__name__, lookup_url_kwarg)
+        )
+
+        filter_kwargs = {self.lookup_field: self.kwargs[lookup_url_kwarg]}
+        obj = queryset.filter(**filter_kwargs).first()
+
+        # May raise a permission denied
+        self.check_object_permissions(self.request, obj)
+
+        return obj
 
     def create(self, request, *args, **kwargs):
 
@@ -64,8 +93,28 @@ class InventoryTypeViewSet(ModelViewSet):
             paginated_response = self.get_paginated_response(serializer.data)
 
             return Response(**self.response_wrapper.formatted_output_success(
-                code=success_codes.INVENTORY_TYPE_CREATE_SUCCESS,
+                code=success_codes.INVENTORY_TYPE_FETCH_SUCCESS,
                 data=paginated_response.data,
+                language=self.language
+            ))
+        except Exception as e:
+            ErrorLog.objects.create(
+                log_type="INVENTORY_TYPE",
+                request_data=request.data,
+                response_data=e.args
+            )
+            return Response(**self.response_wrapper.formatted_output_error(error_codes.UNKNOWN_ERROR, self.language))
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            if not instance:
+                return Response(**self.response_wrapper.formatted_output_error(
+                    error_codes.INVENTORY_TYPE_NOT_FOUND, self.language))
+            serializer = self.get_serializer(instance, many=False)
+            return Response(**self.response_wrapper.formatted_output_success(
+                code=success_codes.INVENTORY_TYPE_RETRIEVE_SUCCESS,
+                data=serializer.data,
                 language=self.language
             ))
         except Exception as e:
