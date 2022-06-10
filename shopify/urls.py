@@ -18,6 +18,9 @@ urlpatterns = [
         }
     )),
     path("inventory-type/<int:id>/", InventoryTypeViewSet.as_view(
-        {"get": "retrieve"}
+        {
+            "get": "retrieve",
+            "patch": "partial_update",
+        }
     )),
 ]

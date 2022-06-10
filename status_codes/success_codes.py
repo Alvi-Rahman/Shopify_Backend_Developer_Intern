@@ -24,9 +24,17 @@ INVENTORY_TYPE_RETRIEVE_SUCCESS = CodeObject(
     }
 )
 
+INVENTORY_TYPE_UPDATE_SUCCESS = CodeObject(
+    http_status=200,
+    state_code="IRS2004",
+    state_message={
+        "en": "Inventory Type Update Success"
+    }
+)
+
 INVENTORY_CREATE_SUCCESS = CodeObject(
     http_status=200,
-    state_code="ICS2004",
+    state_code="ICS2005",
     state_message={
         "en": "Inventory Create Success"
     }

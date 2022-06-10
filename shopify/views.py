@@ -20,11 +20,12 @@ class InventoryTypeViewSet(ModelViewSet):
     lookup_field = "id"
 
     def get_serializer_class(self):
-        if self.action == "create":
+        if self.action == "create" or self.action == "partial_update":
             return InventoryTypeCreateSerializer
-        if self.action == "list":
+        elif self.action == "list":
             return InventoryTypeGetSerializer
-        return InventoryTypeGetSerializer
+        elif self.action == "retrieve":
+            return InventoryTypeGetSerializer
 
     def get_object(self):
         """
@@ -115,6 +116,36 @@ class InventoryTypeViewSet(ModelViewSet):
             return Response(**self.response_wrapper.formatted_output_success(
                 code=success_codes.INVENTORY_TYPE_RETRIEVE_SUCCESS,
                 data=serializer.data,
+                language=self.language
+            ))
+        except Exception as e:
+            ErrorLog.objects.create(
+                log_type="INVENTORY_TYPE",
+                request_data=request.data,
+                response_data=e.args
+            )
+            return Response(**self.response_wrapper.formatted_output_error(error_codes.UNKNOWN_ERROR, self.language))
+
+    def partial_update(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance, data=request.data, partial=True)
+            if not serializer.is_valid():
+                ErrorLog.objects.create(
+                    log_type="INVENTORY_TYPE",
+                    request_data=request.data,
+                    response_data=serializer.errors
+                )
+
+                error_codes.MISSING_FIELD_DATA.set_state_message({self.language: serializer.errors})
+                return Response(
+                    **self.response_wrapper.formatted_output_error(error_codes.MISSING_FIELD_DATA, self.language))
+
+            self.perform_update(serializer)
+
+            return Response(**self.response_wrapper.formatted_output_success(
+                code=success_codes.INVENTORY_TYPE_UPDATE_SUCCESS,
+                data=InventoryTypeGetSerializer(instance=serializer.instance).data,
                 language=self.language
             ))
         except Exception as e:
