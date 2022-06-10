@@ -22,11 +22,6 @@ class InventoryTypeViewSet(ModelViewSet):
     def get_serializer_class(self):
         if self.action == "create" or self.action == "partial_update":
             return InventoryTypeCreateSerializer
-        elif self.action == "list":
-            return InventoryTypeGetSerializer
-        elif self.action == "retrieve":
-            return InventoryTypeGetSerializer
-
         return InventoryTypeGetSerializer
 
     def get_object(self):
