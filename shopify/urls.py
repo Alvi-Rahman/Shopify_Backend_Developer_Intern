@@ -18,9 +18,13 @@ inventory_type_urlpatterns = [
 inventory_urlpatterns = [
     path('inventory/create/', InventoryViewSet.as_view({"post": "create"}),
          name="inventory_create"),
-    path('inventory/all/', InventoryTypeViewSet.as_view({"get": "list"}),
+    path('inventory/all/', InventoryViewSet.as_view({"get": "list"}),
          name="inventory_type_list"),
-    
+    path("inventory/<int:id>/", InventoryViewSet.as_view(
+        {
+            "get": "retrieve",
+        }
+    )),
 ]
 
 urlpatterns = inventory_type_urlpatterns + inventory_urlpatterns
