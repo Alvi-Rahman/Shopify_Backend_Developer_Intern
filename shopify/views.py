@@ -55,9 +55,6 @@ class InventoryTypeViewSet(ModelViewSet):
         filter_kwargs = {self.lookup_field: self.kwargs[lookup_url_kwarg]}
         obj = queryset.filter(**filter_kwargs).first()
 
-        # May raise a permission denied
-        self.check_object_permissions(self.request, obj)
-
         return obj
 
     def create(self, request, *args, **kwargs):
@@ -96,7 +93,8 @@ class InventoryTypeViewSet(ModelViewSet):
                 "date_from", openapi.IN_QUERY, type=openapi.FORMAT_DATE),
             openapi.Parameter(
                 "date_to", openapi.IN_QUERY, type=openapi.FORMAT_DATE),
-        ])
+        ]
+    )
     def list(self, request, *args, **kwargs):
         try:
             queryset = self.get_queryset()
