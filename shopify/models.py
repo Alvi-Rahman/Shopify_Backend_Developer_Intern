@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # Create your models here.
 
 
@@ -26,3 +27,14 @@ class Inventory(models.Model):
 
     class Meta:
         verbose_name_plural = "Inventories"
+
+
+class ErrorLog(models.Model):
+    LOG_TYPE_CHOICES = [("INVENTORY_TYPE", "Inventory Type"),
+                        ("INVENTORY", "Inventory"), ]
+    log_type = models.CharField(
+        max_length=25, choices=LOG_TYPE_CHOICES, default="INVENTORY")
+    request_data = models.JSONField(blank=True, null=True)
+    response_data = models.JSONField(blank=True, null=True)
+
+    misc_data = models.TextField(blank=True, null=True)
