@@ -1,5 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+
+from shopify.models import ErrorLog
 from shopify.serializers import (InventoryTypeCreateSerializer,
                                  InventoryCreateSerializer, )
 from status_codes import error_codes
@@ -21,8 +23,15 @@ class InventoryTypeViewSet(ModelViewSet):
         try:
             serializer = self.get_serializer(data=request.data)
             if not serializer.is_valid():
+                ErrorLog.objects.create(
+                    log_type="INVENTORY_TYPE",
+                    request_data=request.data,
+                    response_data=serializer.errors
+                )
+
                 error_codes.MISSING_FIELD_DATA.set_state_message({self.language: serializer.errors})
-                return Response(**self.response_wrapper.formatted_output_error(error_codes.MISSING_FIELD_DATA, self.language))
+                return Response(
+                    **self.response_wrapper.formatted_output_error(error_codes.MISSING_FIELD_DATA, self.language))
 
             self.perform_create(serializer)
 
@@ -32,6 +41,11 @@ class InventoryTypeViewSet(ModelViewSet):
                 language=self.language
             ))
         except Exception as e:
+            ErrorLog.objects.create(
+                log_type="INVENTORY_TYPE",
+                request_data=request.data,
+                response_data=e.args
+            )
             return Response(**self.response_wrapper.formatted_output_error(error_codes.UNKNOWN_ERROR, self.language))
 
 
