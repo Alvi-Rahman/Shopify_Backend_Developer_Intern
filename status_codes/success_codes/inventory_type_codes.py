@@ -39,11 +39,3 @@ INVENTORY_TYPE_DELETE_SUCCESS = CodeObject(
         "en": "Inventory Type Delete Success"
     }
 )
-
-INVENTORY_CREATE_SUCCESS = CodeObject(
-    http_status=200,
-    state_code="ICS2005",
-    state_message={
-        "en": "Inventory Create Success"
-    }
-)
