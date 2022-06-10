@@ -16,6 +16,14 @@ INVENTORY_TYPE_NOT_FOUND = CodeObject(
     }
 )
 
+INVALID_DATE = CodeObject(
+    http_status=400,
+    state_code="ITN4003",
+    state_message={
+        "en": "Specified Inventory Type Not Found."
+    }
+)
+
 UNKNOWN_ERROR = CodeObject(
     http_status=400,
     state_code="UNK5001",

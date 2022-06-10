@@ -1,3 +1,6 @@
+from django.utils import timezone
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
@@ -85,9 +88,29 @@ class InventoryTypeViewSet(ModelViewSet):
             )
             return Response(**self.response_wrapper.formatted_output_error(error_codes.UNKNOWN_ERROR, self.language))
 
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                "date_from", openapi.IN_QUERY, type=openapi.FORMAT_DATE),
+            openapi.Parameter(
+                "date_to", openapi.IN_QUERY, type=openapi.FORMAT_DATE),
+        ])
     def list(self, request, *args, **kwargs):
         try:
             queryset = self.get_queryset()
+
+            date_from = request.query_params.get('date_from')
+            date_to = request.query_params.get('date_to')
+            if date_from is not None and date_to is not None:
+                try:
+                    date_from = timezone.datetime.strptime(
+                        date_from, "%Y-%m-%d").date()
+                    date_to = timezone.datetime.strptime(
+                        date_to, "%Y-%m-%d").date()
+                    date_to += timezone.timedelta(days=1)
+                except ValueError:
+                    return Response(**self.response_wrapper.formatted_output_error(error_codes.INVALID_DATE, self.language))
+                queryset = queryset.filter(created_at__range=[date_from, date_to])
 
             page = self.paginate_queryset(queryset)
             serializer = self.get_serializer(page, many=True)
