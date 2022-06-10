@@ -82,7 +82,7 @@ class InventoryViewSet(ModelViewSet):
             ))
         except Exception as e:
             ErrorLog.objects.create(
-                log_type="INVENTORY_TYPE",
+                log_type="INVENTORY",
                 request_data=request.data,
                 response_data=e.args
             )
