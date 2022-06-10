@@ -23,6 +23,8 @@ inventory_urlpatterns = [
     path("inventory/<int:id>/", InventoryViewSet.as_view(
         {
             "get": "retrieve",
+            "patch": "partial_update",
+            "delete": "destroy",
         }
     )),
 ]
