@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 
 
@@ -46,3 +48,21 @@ class ErrorLog(models.Model):
 
     def __str__(self):
         return self.log_type
+
+
+class ShipmentContainer(models.Model):
+    id = models.AutoField(primary_key=True)
+    cart_code = models.UUIDField(default=uuid.uuid4)
+    added_products = models.ForeignKey(Inventory, on_delete=models.SET_NULL,
+                                       db_constraint=False, null=True)
+    inventory_count = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return str(self.cart_code)
+
+
+class Shipment(models.Model):
+    shipment_date = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    inventor_per_shipment = models.ManyToManyField(ShipmentContainer)
