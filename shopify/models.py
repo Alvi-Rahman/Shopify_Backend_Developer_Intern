@@ -62,7 +62,13 @@ class ShipmentContainer(models.Model):
 
 
 class Shipment(models.Model):
+    shipment_id = models.UUIDField(default=uuid.uuid4)
+
     shipment_date = models.DateTimeField()
+    inventor_per_shipment = models.ManyToManyField(ShipmentContainer)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    inventor_per_shipment = models.ManyToManyField(ShipmentContainer)
+
+    def __str__(self):
+        return self.shipment_id
