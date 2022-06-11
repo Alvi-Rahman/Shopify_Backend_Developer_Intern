@@ -57,7 +57,8 @@ class InventoryTypeViewSet(ModelViewSet):
                 ErrorLog.objects.create(
                     log_type="INVENTORY_TYPE",
                     request_data=request.data,
-                    response_data=serializer.errors
+                    response_data=serializer.errors,
+                    state="CREATE"
                 )
 
                 error_codes.MISSING_FIELD_DATA.set_state_message({self.language: serializer.errors})
@@ -75,7 +76,8 @@ class InventoryTypeViewSet(ModelViewSet):
             ErrorLog.objects.create(
                 log_type="INVENTORY_TYPE",
                 request_data=request.data,
-                response_data=e.args
+                response_data=e.args,
+                state="CREATE"
             )
             return Response(**self.response_wrapper.formatted_output_error(error_codes.UNKNOWN_ERROR, self.language))
 
@@ -101,7 +103,8 @@ class InventoryTypeViewSet(ModelViewSet):
                         date_to, "%Y-%m-%d").date()
                     date_to += timezone.timedelta(days=1)
                 except ValueError:
-                    return Response(**self.response_wrapper.formatted_output_error(error_codes.INVALID_DATE, self.language))
+                    return Response(
+                        **self.response_wrapper.formatted_output_error(error_codes.INVALID_DATE, self.language))
                 queryset = queryset.filter(created_at__range=[date_from, date_to])
 
             page = self.paginate_queryset(queryset)
@@ -111,13 +114,14 @@ class InventoryTypeViewSet(ModelViewSet):
             return Response(**self.response_wrapper.formatted_output_success(
                 code=success_codes.INVENTORY_TYPE_FETCH_SUCCESS,
                 data=paginated_response.data,
-                language=self.language
+                language=self.language,
             ))
         except Exception as e:
             ErrorLog.objects.create(
                 log_type="INVENTORY_TYPE",
                 request_data=request.data,
-                response_data=e.args
+                response_data=e.args,
+                state="LIST"
             )
             return Response(**self.response_wrapper.formatted_output_error(error_codes.UNKNOWN_ERROR, self.language))
 
@@ -137,7 +141,8 @@ class InventoryTypeViewSet(ModelViewSet):
             ErrorLog.objects.create(
                 log_type="INVENTORY_TYPE",
                 request_data=request.data,
-                response_data=e.args
+                response_data=e.args,
+                state="GET"
             )
             return Response(**self.response_wrapper.formatted_output_error(error_codes.UNKNOWN_ERROR, self.language))
 
@@ -149,7 +154,8 @@ class InventoryTypeViewSet(ModelViewSet):
                 ErrorLog.objects.create(
                     log_type="INVENTORY_TYPE",
                     request_data=request.data,
-                    response_data=serializer.errors
+                    response_data=serializer.errors,
+                    state="UPDATE"
                 )
 
                 error_codes.MISSING_FIELD_DATA.set_state_message({self.language: serializer.errors})
@@ -167,7 +173,8 @@ class InventoryTypeViewSet(ModelViewSet):
             ErrorLog.objects.create(
                 log_type="INVENTORY_TYPE",
                 request_data=request.data,
-                response_data=e.args
+                response_data=e.args,
+                state="UPDATE"
             )
             return Response(**self.response_wrapper.formatted_output_error(error_codes.UNKNOWN_ERROR, self.language))
 
@@ -196,6 +203,7 @@ class InventoryTypeViewSet(ModelViewSet):
             ErrorLog.objects.create(
                 log_type="INVENTORY_TYPE",
                 request_data=request.data,
-                response_data=e.args
+                response_data=e.args,
+                state="DELETE"
             )
             return Response(**self.response_wrapper.formatted_output_error(error_codes.UNKNOWN_ERROR, self.language))
