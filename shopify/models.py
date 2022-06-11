@@ -37,11 +37,19 @@ class Inventory(models.Model):
 class ErrorLog(models.Model):
     LOG_TYPE_CHOICES = [("INVENTORY_TYPE", "Inventory Type"),
                         ("INVENTORY", "Inventory"), ]
+    STATE_CHOICES = [("CREATE", "CREATE"),
+                     ("LIST", "LIST"),
+                     ("GET", "GET"),
+                     ("UPDATE", "UPDATE"),
+                     ("DELETE", "DELETE"), ]
     log_type = models.CharField(
         max_length=25, choices=LOG_TYPE_CHOICES, default="INVENTORY")
     request_data = models.JSONField(blank=True, null=True)
     response_data = models.JSONField(blank=True, null=True)
     misc_data = models.TextField(blank=True, null=True)
+
+    state = models.CharField(
+        max_length=25, choices=STATE_CHOICES, default="CREATE")
 
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
