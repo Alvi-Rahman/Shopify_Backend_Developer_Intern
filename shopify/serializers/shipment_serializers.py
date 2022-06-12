@@ -23,3 +23,11 @@ class ShipmentCreateSerializer(ModelSerializer):
         model = Shipment
         fields = "__all__"
 
+
+class ShipmentGetSerializer(ModelSerializer):
+    inventor_per_shipment = ShipmentContainerGetSerializer(many=True)
+
+    class Meta:
+        model = Shipment
+        exclude = ("id",)
+
