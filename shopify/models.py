@@ -45,6 +45,10 @@ class ShipmentContainer(models.Model):
 class Shipment(models.Model):
     shipment_id = models.UUIDField(default=uuid.uuid4)
 
+    # Can use a separate location model for this as well
+    shipment_from = models.CharField(max_length=50)
+    shipment_to = models.CharField(max_length=50)
+
     shipment_date = models.DateTimeField()
     inventor_per_shipment = models.ManyToManyField(ShipmentContainer)
 
