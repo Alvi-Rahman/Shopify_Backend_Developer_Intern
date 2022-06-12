@@ -33,7 +33,7 @@ class Inventory(models.Model):
 class ShipmentContainer(models.Model):
     cart_code = models.UUIDField(default=uuid.uuid4)
     added_products = models.ForeignKey(Inventory, on_delete=models.SET_NULL,
-                                       db_constraint=False, null=True)
+                                       blank=True, null=True)
     inventory_count = models.PositiveIntegerField(default=1)
 
     def __str__(self):
