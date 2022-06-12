@@ -10,3 +10,11 @@ class ShipmentContainerCreateSerializer(ModelSerializer):
     class Meta:
         model = ShipmentContainer
         fields = "__all__"
+
+
+class ShipmentCreateSerializer(ModelSerializer):
+    inventor_per_shipment = ShipmentContainerCreateSerializer(many=True)
+
+    class Meta:
+        model = Shipment
+        fields = "__all__"
