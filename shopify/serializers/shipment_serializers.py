@@ -16,3 +16,10 @@ class ShipmentContainerGetSerializer(ModelSerializer):
     class Meta:
         model = ShipmentContainer
         exclude = ("id",)
+
+
+class ShipmentCreateSerializer(ModelSerializer):
+    class Meta:
+        model = Shipment
+        fields = "__all__"
+
