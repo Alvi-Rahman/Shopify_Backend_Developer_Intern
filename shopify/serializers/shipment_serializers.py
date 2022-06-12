@@ -27,7 +27,7 @@ class ShipmentCreateSerializer(ModelSerializer):
 
 
 class ShipmentGetSerializer(ModelSerializer):
-    inventor_per_shipment = ShipmentContainerGetSerializer(many=True)
+    inventory_per_shipment = ShipmentContainerGetSerializer(many=True)
 
     class Meta:
         model = Shipment
