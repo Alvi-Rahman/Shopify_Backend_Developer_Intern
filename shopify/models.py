@@ -59,7 +59,9 @@ class Shipment(models.Model):
 
 class ErrorLog(models.Model):
     LOG_TYPE_CHOICES = [("INVENTORY_TYPE", "Inventory Type"),
-                        ("INVENTORY", "Inventory"), ]
+                        ("INVENTORY", "Inventory"),
+                        ("SHIPMENT", "Shipment"),
+                        ]
     STATE_CHOICES = [("CREATE", "CREATE"),
                      ("LIST", "LIST"),
                      ("GET", "GET"),
