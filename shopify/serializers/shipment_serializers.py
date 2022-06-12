@@ -11,7 +11,7 @@ class ShipmentContainerCreateSerializer(ModelSerializer):
 
 
 class ShipmentContainerGetSerializer(ModelSerializer):
-    added_products = InventoryGetSerializer
+    added_products = InventoryGetSerializer()
 
     class Meta:
         model = ShipmentContainer
