@@ -15,4 +15,4 @@ class ShipmentContainerGetSerializer(ModelSerializer):
 
     class Meta:
         model = ShipmentContainer
-        fields = "__all__"
+        exclude = ("id",)
