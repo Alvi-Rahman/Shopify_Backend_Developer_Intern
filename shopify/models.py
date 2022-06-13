@@ -48,7 +48,7 @@ class Shipment(models.Model):
     shipment_to = models.CharField(max_length=50, blank=True, null=True)
 
     shipment_date = models.DateTimeField()
-    inventor_per_shipment = models.ManyToManyField(ShipmentContainer)
+    inventory_per_shipment = models.ManyToManyField(ShipmentContainer)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
