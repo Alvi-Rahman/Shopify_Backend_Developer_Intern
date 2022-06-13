@@ -31,14 +31,13 @@ class Inventory(models.Model):
 
 
 class ShipmentContainer(models.Model):
-    id = models.AutoField(primary_key=True)
     cart_code = models.UUIDField(default=uuid.uuid4)
     added_products = models.ForeignKey(Inventory, on_delete=models.SET_NULL,
                                        blank=True, null=True)
     inventory_count = models.PositiveIntegerField(default=1)
 
     def __str__(self):
-        return str(self.cart_code)
+        return self.pk
 
 
 class Shipment(models.Model):
@@ -55,7 +54,7 @@ class Shipment(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.shipment_id.__str__()
+        return self.pk
 
 
 class ErrorLog(models.Model):
