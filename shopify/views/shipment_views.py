@@ -6,7 +6,8 @@ from rest_framework.viewsets import ModelViewSet
 
 from shopify.models import ErrorLog, Shipment
 from shopify.serializers import (ShipmentCreateSerializer,
-                                 ShipmentGetSerializer,)
+                                 ShipmentGetSerializer,
+                                 ShipmentContainerMakeSerializer, )
 from status_codes import success_codes, error_codes
 from utils.pagination_utils import CustomLimitPagination
 from utils.response_utils import ResponseWrapper
@@ -65,7 +66,24 @@ class ShipmentViewSet(ModelViewSet):
                 return Response(
                     **self.response_wrapper.formatted_output_error(error_codes.MISSING_FIELD_DATA, self.language))
 
+            inventory_per_shipment = serializer.validated_data.pop("inventory_per_shipment")
+
+            shipment_container_serializer = ShipmentContainerMakeSerializer(data=inventory_per_shipment, many=True)
+
+            if not shipment_container_serializer.is_valid():
+                ErrorLog.objects.create(
+                    log_type="SHIPMENT",
+                    request_data=request.data,
+                    response_data=shipment_container_serializer.errors,
+                    state="CREATE"
+                )
+                error_codes.MISSING_FIELD_DATA.set_state_message({self.language: serializer.errors})
+                return Response(
+                    **self.response_wrapper.formatted_output_error(error_codes.MISSING_FIELD_DATA, self.language))
+
+            shipment_container_serializer.save()
             self.perform_create(serializer)
+            serializer.instance.inventory_per_shipment.add(*shipment_container_serializer.instance)
 
             return Response(**self.response_wrapper.formatted_output_success(
                 code=success_codes.INVENTORY_CREATE_SUCCESS,
