@@ -37,7 +37,7 @@ class ShipmentContainer(models.Model):
     inventory_count = models.PositiveIntegerField(default=1)
 
     def __str__(self):
-        return self.pk
+        return self.pk.__str__()
 
 
 class Shipment(models.Model):
@@ -54,7 +54,7 @@ class Shipment(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.pk
+        return self.pk.__str__()
 
 
 class ErrorLog(models.Model):
