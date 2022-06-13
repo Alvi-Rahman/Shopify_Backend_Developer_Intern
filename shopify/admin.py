@@ -3,7 +3,8 @@ from .models import *
 
 
 class InventoryTypeAdmin(admin.ModelAdmin):
-    list_display = ["type_name",
+    list_display = ["id",
+                    "type_name",
                     "active_status",
                     "created_at",
                     "updated_at",
@@ -12,7 +13,8 @@ class InventoryTypeAdmin(admin.ModelAdmin):
 
 
 class InventoryAdmin(admin.ModelAdmin):
-    list_display = ["title",
+    list_display = ["id",
+                    "title",
                     "stock_count",
                     "inventory_type",
                     "active_status",
@@ -23,13 +25,15 @@ class InventoryAdmin(admin.ModelAdmin):
 
 
 class ShipmentContainerAdmin(admin.ModelAdmin):
-    list_display = ["cart_code",
+    list_display = ["id",
+                    "cart_code",
                     "added_products",
                     "inventory_count", ]
 
 
 class ShipmentAdmin(admin.ModelAdmin):
-    list_display = ["shipment_id",
+    list_display = ["id",
+                    "shipment_id",
                     "shipment_from",
                     "shipment_to",
                     "shipment_date",
@@ -42,7 +46,8 @@ class ShipmentAdmin(admin.ModelAdmin):
 
 
 class ErrorLogAdmin(admin.ModelAdmin):
-    list_display = ["log_type",
+    list_display = ["id",
+                    "log_type",
                     "created_at",
                     "updated_at",
                     ]
