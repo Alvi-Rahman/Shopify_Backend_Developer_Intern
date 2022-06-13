@@ -31,6 +31,7 @@ class Inventory(models.Model):
 
 
 class ShipmentContainer(models.Model):
+    id = models.AutoField(primary_key=True)
     cart_code = models.UUIDField(default=uuid.uuid4)
     added_products = models.ForeignKey(Inventory, on_delete=models.SET_NULL,
                                        blank=True, null=True)
