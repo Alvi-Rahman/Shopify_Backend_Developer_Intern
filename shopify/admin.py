@@ -31,14 +31,14 @@ class ShipmentContainerAdmin(admin.ModelAdmin):
 class ShipmentAdmin(admin.ModelAdmin):
     list_display = ["shipment_id",
                     "shipment_from",
-                    "shipment_to"
+                    "shipment_to",
                     "shipment_date",
                     "created_at",
                     "updated_at",
                     ]
-    search_fields = ["log_type", ]
-
-    list_filter = ['log_type', ]
+    search_fields = ["shipment_from",
+                     "shipment_to",
+                     "shipment_date", ]
 
 
 class ErrorLogAdmin(admin.ModelAdmin):
