@@ -1,13 +1,20 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, Serializer
+from rest_framework import serializers
 
-from shopify.models import Shipment, ShipmentContainer
-from .inventory_serializer import InventoryGetSerializer
+from shopify.models import Shipment, ShipmentContainer, Inventory
+from shopify.serializers import InventoryGetSerializer
 
 
-class ShipmentContainerCreateSerializer(ModelSerializer):
+class ShipmentContainerCreateSerializer(Serializer):
+    added_products = serializers.IntegerField()
+    inventory_count = serializers.IntegerField()
+
+
+class ShipmentContainerMakeSerializer(ModelSerializer):
+
     class Meta:
         model = ShipmentContainer
-        fields = "__all__"
+        exclude = ("id", "cart_code", )
 
 
 class ShipmentContainerGetSerializer(ModelSerializer):
@@ -15,8 +22,7 @@ class ShipmentContainerGetSerializer(ModelSerializer):
 
     class Meta:
         model = ShipmentContainer
-        exclude = ("id",)
-
+        exclude = ("id", "cart_code",)
 
 class ShipmentCreateSerializer(ModelSerializer):
     inventory_per_shipment = ShipmentContainerCreateSerializer(many=True)
