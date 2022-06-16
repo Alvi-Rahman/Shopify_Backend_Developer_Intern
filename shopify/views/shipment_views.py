@@ -77,11 +77,12 @@ class ShipmentViewSet(ModelViewSet):
                     response_data=shipment_container_serializer.errors,
                     state="CREATE"
                 )
-                error_codes.MISSING_FIELD_DATA.set_state_message({self.language: serializer.errors})
+                error_codes.MISSING_FIELD_DATA.set_state_message({self.language: shipment_container_serializer.errors})
                 return Response(
                     **self.response_wrapper.formatted_output_error(error_codes.MISSING_FIELD_DATA, self.language))
 
             shipment_container_serializer.save()
+
             self.perform_create(serializer)
             serializer.instance.inventory_per_shipment.add(*shipment_container_serializer.instance)
 
